@@ -23,24 +23,24 @@ export default function BackgroundWrapper({
     return (
         <>
             <Circle
-                SPEED_X={10}
-                SPEED_Y={10}
+                SPEED_X={2}
+                SPEED_Y={3}
                 upper_bound={UPPER_BOUND}
                 lower_bound={LOWER_BOUND}
                 left_bound={LEFT_BOUND}
                 right_bound={RIGHT_BOUND}
             />
             <Circle
-                SPEED_X={-10}
-                SPEED_Y={-7}
+                SPEED_X={-3}
+                SPEED_Y={-1.2}
                 upper_bound={UPPER_BOUND}
                 lower_bound={LOWER_BOUND}
                 left_bound={LEFT_BOUND}
                 right_bound={RIGHT_BOUND}
             />
             <Circle
-                SPEED_X={15}
-                SPEED_Y={-8}
+                SPEED_X={3}
+                SPEED_Y={-2.1}
                 upper_bound={UPPER_BOUND}
                 lower_bound={LOWER_BOUND}
                 left_bound={LEFT_BOUND}

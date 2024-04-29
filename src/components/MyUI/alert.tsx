@@ -20,16 +20,18 @@ export interface DivProps
     extends React.HTMLAttributes<HTMLDivElement>,
         VariantProps<typeof AlertVariants> {
     asChild?: boolean;
-    message: string;
+    message?: string;
 }
 
 const Alert = React.forwardRef<HTMLDivElement, DivProps>(
     ({ className, variant, message, asChild = false, ...props }, ref) => {
-        return (
+        return message ? (
             <div className={cn(AlertVariants({ variant, className }))}>
                 <CheckCircledIcon className="h-4 w-4" />
                 <p>{message}</p>
             </div>
+        ) : (
+            <></>
         );
     }
 );
