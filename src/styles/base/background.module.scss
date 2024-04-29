@@ -1,0 +1,38 @@
+$random_number: random(
+    $limit: 100,
+);
+
+.animated_background {
+    @apply container px-2 flex flex-col justify-center items-center h-dvh;
+    background-color: transparent;
+    backdrop-filter: blur(100px);
+}
+
+.circle {
+    @apply absolute top-1/2 left-1/2 size-60 rounded-full snap-center -z-10;
+
+    &:nth-of-type(1) {
+        transform: translate(-50%, -50%);
+        background-color: rgba($color: #d6b4fc, $alpha: 1);
+    }
+    &:nth-of-type(2) {
+        transform: translate(-50%, -50%);
+        background-color: rgba($color: #008080, $alpha: 0.5);
+    }
+    &:nth-of-type(3) {
+        transform: translate(-50%, -50%);
+        background-color: rgba($color: #ff8f1f, $alpha: 1);
+    }
+
+    :global(.dark) & {
+        &:nth-of-type(1) {
+            background-color: rgba($color: rgb(255, 79, 79), $alpha: 0.6);
+        }
+        &:nth-of-type(2) {
+            background-color: rgba($color: #008080, $alpha: 0.8);
+        }
+        &:nth-of-type(3) {
+            background-color: rgba($color: #f5af54, $alpha: 0.6);
+        }
+    }
+}
