@@ -1,5 +1,6 @@
 "use client";
 
+import { register } from "@/actions/register";
 import { RegisterSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -17,9 +18,12 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { Alert } from "@/components/MyUI/alert";
-import { register } from "@/actions/register";
+import { useSearchParams } from "next/navigation";
 
 export default function RegisterPage() {
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get("callbackUrl");
+
     const [message, setMessage] = useState("");
     const [responseType, setResponseType] = useState<"error" | "success">(
         "error"
@@ -42,7 +46,7 @@ export default function RegisterPage() {
 
         // set the values after getting response
         startTransition(() => {
-            register(values).then((data) => {
+            register(values, callbackUrl).then((data) => {
                 setResponseType(data.type);
                 setMessage(data.message);
             });
@@ -127,7 +131,14 @@ export default function RegisterPage() {
                     </Button>
                 </form>
             </Form>
-            <Link href={"/auth/login"} className="mt-4 hover:underline">
+            <Link
+                href={
+                    callbackUrl
+                        ? `/auth/login?callbackUrl=${callbackUrl}`
+                        : "/auth/login"
+                }
+                className="mt-4 hover:underline"
+            >
                 Already have an account? Login Here
             </Link>
         </>

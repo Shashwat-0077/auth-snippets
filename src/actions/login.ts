@@ -11,10 +11,12 @@ import * as z from "zod";
 /**
  * This is the server action to get the user logged in
  * @param {object} values - Takes a object that has email and password of the user
+ * @param {string} callbackUrl - Give the url that you want ot redirect to after login
  * @returns A Promise that have data like : {type : "error" | "success" , message : string}
  */
 export const login = async (
-    values: z.infer<typeof LoginSchema>
+    values: z.infer<typeof LoginSchema>,
+    callbackUrl: string | undefined | null
 ): Promise<{
     type: "error" | "success";
     message: string;
@@ -30,7 +32,9 @@ export const login = async (
         await signIn("credentials", {
             email,
             password,
-            redirectTo: DEFAULT_LOGIN_REDIRECT,
+            // By default only URLs on the same host as the origin are allowed
+            // according to the auth.js documentation
+            redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
         });
     } catch (error) {
         if (error instanceof AuthError) {

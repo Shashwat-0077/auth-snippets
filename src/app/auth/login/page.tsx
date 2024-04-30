@@ -18,8 +18,12 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { Alert } from "@/components/MyUI/alert";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get("callbackUrl");
+
     const [message, setMessage] = useState("");
     const [responseType, setResponseType] = useState<"error" | "success">(
         "error"
@@ -41,7 +45,7 @@ export default function LoginPage() {
 
         // set the values after getting response
         startTransition(() => {
-            login(values).then((data) => {
+            login(values, callbackUrl).then((data) => {
                 if (data) {
                     setResponseType(data.type);
                     setMessage(data.message);
@@ -106,7 +110,14 @@ export default function LoginPage() {
                     </Button>
                 </form>
             </Form>
-            <Link href={"/auth/register"} className="hover:underline">
+            <Link
+                href={
+                    callbackUrl
+                        ? `/auth/register?callbackUrl=${callbackUrl}`
+                        : "/auth/register"
+                }
+                className="hover:underline"
+            >
                 Don&apos;t have an account? Register here
             </Link>
         </>

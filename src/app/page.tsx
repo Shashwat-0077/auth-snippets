@@ -8,6 +8,15 @@ export default function Home() {
                 <Link href="/auth/login" className="text-sm hover:underline">
                     Go to Login Page
                 </Link>
+                <Link href="/settings" className="text-sm hover:underline">
+                    Settings Page
+                </Link>
+                <Link href="/dashboard" className="text-sm hover:underline">
+                    Dashboard Page
+                </Link>
+                <Link href="/client" className="text-sm hover:underline">
+                    Client Page
+                </Link>
             </div>
         </div>
     );

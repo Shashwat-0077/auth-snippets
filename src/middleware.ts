@@ -11,6 +11,7 @@ const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
     const { nextUrl } = req;
+
     const isLoggedIn = !!req.auth;
 
     const isAPIAuthRoute = nextUrl.pathname.startsWith(authRoutesPrefix);
@@ -27,7 +28,9 @@ export default auth((req) => {
     }
 
     if (!isLoggedIn && !isPublicRoutes) {
-        return Response.redirect(new URL("/auth/login", nextUrl));
+        const UrlWithCallBack = new URL("/auth/login", nextUrl);
+        UrlWithCallBack.searchParams.append("callbackUrl", nextUrl.pathname);
+        return Response.redirect(UrlWithCallBack);
     }
 
     return;

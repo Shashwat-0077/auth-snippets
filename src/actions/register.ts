@@ -14,12 +14,14 @@ import { getUserByEmail } from "@/data/user";
  * @returns A Promise that have data like : {type : "error" | "success" , message : string}
  */
 export const register = async (
-    values: z.infer<typeof RegisterSchema>
+    values: z.infer<typeof RegisterSchema>,
+    callbackUrl: string | undefined | null
 ): Promise<{ type: "error" | "success"; message: string }> => {
     const validatedFields = RegisterSchema.safeParse(values);
 
-    if (!validatedFields.success)
+    if (!validatedFields.success) {
         return { type: "error", message: "Invalid Fields!" };
+    }
 
     const { name, email, password } = validatedFields.data;
     const hashedPassword = await hash(password, 10);
