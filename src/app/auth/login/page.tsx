@@ -42,8 +42,10 @@ export default function LoginPage() {
         // set the values after getting response
         startTransition(() => {
             login(values).then((data) => {
-                setResponseType(data.type);
-                setMessage(data.message);
+                if (data) {
+                    setResponseType(data.type);
+                    setMessage(data.message);
+                }
             });
         });
     };

@@ -3,6 +3,8 @@ import { EyeClosedIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 
 import { cn } from "@/lib/utils";
 
+// TODO : Remove the the eye icon from the edge, cause the fucking edge add it by itself
+
 export interface InputProps
     extends React.InputHTMLAttributes<HTMLInputElement> {}
 
