@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+//! remember to run mongodb atlas before running the app brother 🙂🙂
+
 export default function Home() {
     return (
         <div>

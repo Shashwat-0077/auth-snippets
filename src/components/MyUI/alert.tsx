@@ -2,7 +2,10 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
-import { CheckCircledIcon } from "@radix-ui/react-icons";
+import {
+    CheckCircledIcon,
+    ExclamationTriangleIcon,
+} from "@radix-ui/react-icons";
 
 const AlertVariants = cva("p-3 rounded-md flex items-center gap-x-2", {
     variants: {
@@ -27,7 +30,11 @@ const Alert = React.forwardRef<HTMLDivElement, DivProps>(
     ({ className, variant, message, asChild = false, ...props }, ref) => {
         return message ? (
             <div className={cn(AlertVariants({ variant, className }))}>
-                <CheckCircledIcon className="h-4 w-4" />
+                {variant === "error" ? (
+                    <ExclamationTriangleIcon className="h-4 w-4" />
+                ) : (
+                    <CheckCircledIcon className="h-4 w-4" />
+                )}
                 <p>{message}</p>
             </div>
         ) : (

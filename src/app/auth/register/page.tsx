@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { Alert } from "@/components/MyUI/alert";
 import { useSearchParams } from "next/navigation";
+import Socials from "@/components/MyUI/socials";
 
 export default function RegisterPage() {
     const searchParams = useSearchParams();
@@ -126,9 +127,10 @@ export default function RegisterPage() {
                         variant={responseType}
                         className="w-full mt-4"
                     />
-                    <Button className="w-full mt-6" disabled={isPending}>
+                    <Button className="w-full mt-6 mb-4" disabled={isPending}>
                         Create an account
                     </Button>
+                    <Socials />
                 </form>
             </Form>
             <Link
@@ -137,7 +139,7 @@ export default function RegisterPage() {
                         ? `/auth/login?callbackUrl=${callbackUrl}`
                         : "/auth/login"
                 }
-                className="mt-4 hover:underline"
+                className="mt-2 hover:underline"
             >
                 Already have an account? Login Here
             </Link>

@@ -11,7 +11,11 @@ export const publicRoutes: string[] = ["/"];
  * This routes will redirect to callback url or the DEFAULT_LOGIN_URL
  * @type {string[]}
  */
-export const authRoutes: string[] = ["/auth/login", "/auth/register"];
+export const authRoutes: string[] = [
+    "/auth/login",
+    "/auth/register",
+    "/auth/error",
+];
 
 /**
  * Those routes that starts with this prefix should NOT be blocked by authentication

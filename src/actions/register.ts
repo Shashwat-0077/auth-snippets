@@ -15,7 +15,7 @@ import { getUserByEmail } from "@/data/user";
  */
 export const register = async (
     values: z.infer<typeof RegisterSchema>,
-    callbackUrl: string | undefined | null
+    callbackUrl?: string | null
 ): Promise<{ type: "error" | "success"; message: string }> => {
     const validatedFields = RegisterSchema.safeParse(values);
 

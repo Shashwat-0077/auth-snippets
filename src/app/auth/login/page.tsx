@@ -19,10 +19,15 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { Alert } from "@/components/MyUI/alert";
 import { useSearchParams } from "next/navigation";
+import Socials from "@/components/MyUI/socials";
 
 export default function LoginPage() {
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get("callbackUrl");
+    const urlError =
+        searchParams.get("error") === "OAuthAccountNotLinked"
+            ? "Email already in use with different provider"
+            : ""; // to catch the error when the user try different OAuth providers with same mail
 
     const [message, setMessage] = useState("");
     const [responseType, setResponseType] = useState<"error" | "success">(
@@ -60,7 +65,7 @@ export default function LoginPage() {
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col items-center"
+                    className="flex flex-col items-center w-[20rem]"
                 >
                     <div className="space-y-4 w-full">
                         <FormField
@@ -101,13 +106,14 @@ export default function LoginPage() {
                         />
                     </div>
                     <Alert
-                        message={message}
-                        variant={responseType}
+                        message={message || urlError}
+                        variant={responseType || (urlError ? "error" : "")}
                         className="w-full mt-4"
                     />
                     <Button className="w-full mt-6 mb-3" disabled={isPending}>
                         Login
                     </Button>
+                    <Socials callbackUrl={callbackUrl} />
                 </form>
             </Form>
             <Link
