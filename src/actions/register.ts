@@ -5,6 +5,8 @@ import * as z from "zod";
 import { hash } from "bcryptjs";
 import { db } from "@/lib/db";
 import { getUserByEmail } from "@/data/user";
+import { generateVerificationToken } from "@/lib/tokens";
+import { sendVerificationEmail } from "@/lib/mail";
 
 // TODO : Look into server actions Progressive enhancement for more good code(idk if its optimize or do something else but it has its pros so do look into it)
 
@@ -39,6 +41,8 @@ export const register = async (
     });
 
     // TODO : Send verification token email
+    const verificationToken = await generateVerificationToken(email);
+    sendVerificationEmail(verificationToken.email, verificationToken.token);
 
-    return { type: "success", message: "User Created!" };
+    return { type: "success", message: "Confirmation Email Send!" };
 };

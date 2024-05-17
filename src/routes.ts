@@ -3,7 +3,12 @@
  * All people are able to access these routes
  * @type {string[]}
  */
-export const publicRoutes: string[] = ["/"];
+export const publicRoutes: string[] = [
+    "/",
+    // we added this here because the logged in user can also change their email from settings, and if we put it in
+    // authRoutes than the logged in user will not be able to use this route
+    "/auth/new-verification",
+];
 
 /**
  * This is the array of routes that belongs to the auth group,

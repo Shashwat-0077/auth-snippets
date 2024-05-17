@@ -1,8 +1,12 @@
 "use server";
 
 import { signIn } from "@/auth";
+import { getUserByEmail } from "@/data/user";
+import { sendVerificationEmail } from "@/lib/mail";
+import { generateVerificationToken } from "@/lib/tokens";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { LoginSchema } from "@/schema";
+import { compare } from "bcryptjs";
 import { AuthError } from "next-auth";
 import * as z from "zod";
 
@@ -28,6 +32,40 @@ export const login = async (
 
     const { email, password } = validatedFields.data;
 
+    const existingUser = await getUserByEmail(email);
+
+    // Check if the user exists or
+    // check if user is mistakenly trying to login with Credential login when they have account in OAuth login
+    if (!existingUser || !existingUser.email || !existingUser.password) {
+        return {
+            type: "error",
+            message: "Invalid Credentials",
+        };
+    }
+
+    // check if the email is verified or not
+    if (!existingUser.emailVerified) {
+        // check the password input by user, matches the password stored in the database
+        // if yes then ONLY send the new verification token
+        const passwordsMatch = await compare(password, existingUser.password);
+        if (!passwordsMatch) {
+            return {
+                type: "error",
+                message: "Invalid Credentials",
+            };
+        }
+
+        const verificationToken = await generateVerificationToken(
+            existingUser.email
+        );
+        sendVerificationEmail(verificationToken.email, verificationToken.token);
+
+        return {
+            type: "success",
+            message: "Confirmation Email Sent!",
+        };
+    }
+
     try {
         await signIn("credentials", {
             email,
@@ -38,10 +76,14 @@ export const login = async (
         });
     } catch (error) {
         if (error instanceof AuthError) {
+            // this run when the user inputs the wrong email or password
             switch (error.type) {
                 //cspell:disable-next-line
                 case "CredentialsSignin":
-                    return { type: "error", message: "Invalid Credentials" };
+                    return {
+                        type: "error",
+                        message: "Invalid Credentials",
+                    };
                 default:
                     return { type: "error", message: "Something Went Wrong" };
             }
