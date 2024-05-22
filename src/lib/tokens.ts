@@ -1,13 +1,15 @@
 import { v4 as uuidV4 } from "uuid";
 import { db } from "./db";
 import { getVerificationTokenByEmail } from "@/data/verificationToken";
-import { VerificationToken } from "@prisma/client";
+import { PasswordReset, VerificationToken } from "@prisma/client";
+import { getUserByEmail } from "@/data/user";
+import { getPasswordTokenByEmail } from "@/data/passwordTokens";
 
 export const generateVerificationToken = async (
     email: string
 ): Promise<VerificationToken> => {
     const token = uuidV4();
-    const expires = new Date(new Date().getTime() + 3600 * 1000);
+    const expires = new Date(new Date().getTime() + 1000 * 60 * 60);
 
     const existingToken = await getVerificationTokenByEmail(email);
 
@@ -30,4 +32,29 @@ export const generateVerificationToken = async (
     });
 
     return verificationToken;
+};
+
+export const generateResetPasswordToken = async (
+    email: string
+): Promise<PasswordReset> => {
+    const token = uuidV4();
+    const expires = new Date(new Date().getTime() + 1000 * 60 * 15);
+
+    const existingToken = await getPasswordTokenByEmail(email);
+
+    if (existingToken) {
+        await db.passwordReset.delete({
+            where: { id: existingToken.id },
+        });
+    }
+
+    const passwordToken = await db.passwordReset.create({
+        data: {
+            email,
+            token,
+            expires,
+        },
+    });
+
+    return passwordToken;
 };

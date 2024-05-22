@@ -34,9 +34,13 @@ export const login = async (
 
     const existingUser = await getUserByEmail(email);
 
-    // Check if the user exists or
-    // check if user is mistakenly trying to login with Credential login when they have account in OAuth login
-    if (!existingUser || !existingUser.email || !existingUser.password) {
+    if (
+        // Check if the user exists or
+        !existingUser ||
+        !existingUser.email ||
+        // check if user is mistakenly trying to login with Credential login when they have account in OAuth login
+        !existingUser.password
+    ) {
         return {
             type: "error",
             message: "Invalid Credentials",
@@ -58,7 +62,10 @@ export const login = async (
         const verificationToken = await generateVerificationToken(
             existingUser.email
         );
-        sendVerificationEmail(verificationToken.email, verificationToken.token);
+        await sendVerificationEmail(
+            verificationToken.email,
+            verificationToken.token
+        );
 
         return {
             type: "success",

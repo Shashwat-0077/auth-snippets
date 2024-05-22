@@ -105,12 +105,22 @@ export default function LoginPage() {
                             )}
                         />
                     </div>
+                    <Button
+                        variant={"link"}
+                        type="button"
+                        className="mt-3 px-0 self-start font-normal"
+                        asChild
+                    >
+                        <Link href="/auth/reset-password-request">
+                            Forget you password ?
+                        </Link>
+                    </Button>
                     <Alert
                         message={message || urlError}
                         variant={responseType || (urlError ? "error" : "")}
                         className="w-full mt-4"
                     />
-                    <Button className="w-full mt-6 mb-3" disabled={isPending}>
+                    <Button className="w-full mt-3 mb-3" disabled={isPending}>
                         Login
                     </Button>
                     <Socials callbackUrl={callbackUrl} />

@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Alert } from "@/components/MyUI/alert";
 import { BarLoader } from "react-spinners";
 import { useSearchParams } from "next/navigation";
-import { EmailVerification } from "@/actions/verification";
+import { EmailVerification } from "@/actions/emailVerification";
 
 export default function NewVerificationPage() {
     const searchParams = useSearchParams();
