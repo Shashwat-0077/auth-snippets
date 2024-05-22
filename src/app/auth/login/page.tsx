@@ -20,6 +20,14 @@ import { useState, useTransition } from "react";
 import { Alert } from "@/components/MyUI/alert";
 import { useSearchParams } from "next/navigation";
 import Socials from "@/components/MyUI/socials";
+import {
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSeparator,
+    InputOTPSlot,
+} from "@/components/ui/input-otp";
+
+// TODO : Make a different page for 2FA, having both on the same is a bit clunky or make a sub components (one for form and one for 2fa) and handles those in a parent component
 
 export default function LoginPage() {
     const searchParams = useSearchParams();
@@ -33,6 +41,7 @@ export default function LoginPage() {
     const [responseType, setResponseType] = useState<"error" | "success">(
         "error"
     );
+    const [showTwoFactor, setShowTwoFactor] = useState(false);
     const [isPending, startTransition] = useTransition();
 
     const form = useForm<z.infer<typeof LoginSchema>>({
@@ -50,78 +59,141 @@ export default function LoginPage() {
 
         // set the values after getting response
         startTransition(() => {
-            login(values, callbackUrl).then((data) => {
-                if (data) {
-                    setResponseType(data.type);
-                    setMessage(data.message);
-                }
-            });
+            login(values, callbackUrl)
+                .then((data) => {
+                    if (data) {
+                        if (data?.twoFactor) {
+                            setShowTwoFactor(true);
+                        } else {
+                            setResponseType(data.type);
+                            setMessage(data.message);
+                        }
+                    }
+                })
+                .catch(() => {
+                    setResponseType("error");
+                    setMessage("Something Went Wrong at form");
+                });
         });
     };
 
     return (
         <>
-            <h1 className="text-2xl">Login Page</h1>
+            <h1 className="text-2xl mb-4">
+                {showTwoFactor ? "Two factor Verification" : "Login Page"}
+            </h1>
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="flex flex-col items-center w-[20rem]"
                 >
                     <div className="space-y-4 w-full">
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="">Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            placeholder="example@mail.com"
-                                            type="email"
-                                            disabled={isPending}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="">Password</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
-                                            type="password"
-                                            disabled={isPending}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        {showTwoFactor && (
+                            <FormField
+                                control={form.control}
+                                name="code"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <div className="w-full grid place-content-center">
+                                                <InputOTP
+                                                    maxLength={6}
+                                                    {...field}
+                                                >
+                                                    <InputOTPGroup>
+                                                        <InputOTPSlot
+                                                            index={0}
+                                                        />
+                                                        <InputOTPSlot
+                                                            index={1}
+                                                        />
+                                                        <InputOTPSlot
+                                                            index={2}
+                                                        />
+                                                    </InputOTPGroup>
+                                                    <InputOTPSeparator />
+                                                    <InputOTPGroup>
+                                                        <InputOTPSlot
+                                                            index={3}
+                                                        />
+                                                        <InputOTPSlot
+                                                            index={4}
+                                                        />
+                                                        <InputOTPSlot
+                                                            index={5}
+                                                        />
+                                                    </InputOTPGroup>
+                                                </InputOTP>
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
+                        {!showTwoFactor && (
+                            <>
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="">
+                                                Email
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    placeholder="example@mail.com"
+                                                    type="email"
+                                                    disabled={isPending}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="">
+                                                Password
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
+                                                    type="password"
+                                                    disabled={isPending}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button
+                                    variant={"link"}
+                                    type="button"
+                                    className="mt-3 px-0 self-start font-normal"
+                                    asChild
+                                >
+                                    <Link href="/auth/reset-password-request">
+                                        Forget you password ?
+                                    </Link>
+                                </Button>
+                            </>
+                        )}
                     </div>
-                    <Button
-                        variant={"link"}
-                        type="button"
-                        className="mt-3 px-0 self-start font-normal"
-                        asChild
-                    >
-                        <Link href="/auth/reset-password-request">
-                            Forget you password ?
-                        </Link>
-                    </Button>
+
                     <Alert
                         message={message || urlError}
                         variant={responseType || (urlError ? "error" : "")}
                         className="w-full mt-4"
                     />
                     <Button className="w-full mt-3 mb-3" disabled={isPending}>
-                        Login
+                        {showTwoFactor ? "Confirm" : "Login"}
                     </Button>
                     <Socials callbackUrl={callbackUrl} />
                 </form>

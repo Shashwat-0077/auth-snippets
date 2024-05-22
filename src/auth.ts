@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "@/auth.config";
 import { db } from "./lib/db";
 import { getUserById } from "./data/user";
+import { getTwoFactorConfirmationByUserID } from "./data/twoFactorConfirmation";
 
 //? Quick Tip : Everything that you implement in login or register (server actions/routes) you should also implement that in the next-auth callbacks or events as much as you can for the total or the high security, cause anybody can access the server links and can bypass the server action layer
 
@@ -40,6 +41,19 @@ export const {
             if (!existingUser?.emailVerified) return false;
 
             // TODO : add 2fa check
+            if (existingUser.isTwoFactorEnabled) {
+                const twoFactorConfirmation =
+                    await getTwoFactorConfirmationByUserID(existingUser.id);
+
+                if (!twoFactorConfirmation) return false;
+
+                // Delete two factor confirmation for next signIn
+                await db.twoFactorConfirmation.delete({
+                    where: {
+                        id: twoFactorConfirmation.id,
+                    },
+                });
+            }
 
             return true;
         },
